@@ -1,43 +1,42 @@
-apiVersion: extensions/v1beta1
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: testapp-deployment
+  name: nginx
 spec:
-  replicas: 1
-  template:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
     metadata:
       labels:
-        app: testapp
+        app: nginx
     spec:
       containers:
-      - name: testapp
+      - name: nginx
         image: nginx
         ports:
         - containerPort: 80
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
-  name: testapp-service
-spec:
-  selector:
-    app: testapp
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: testapp-ingress
+  name: nginx
+  namespace: default
+  labels:
+    app: nginx
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 spec:
-  rules:
-  - http:
-      paths:
-      - path: /testapp
-        backend:
-          serviceName: testapp-service
-          servicePort: 80
+  externalTrafficPolicy: Local
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
