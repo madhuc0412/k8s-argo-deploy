@@ -12,7 +12,7 @@ spec:
        template:
          spec:
            containers:
-           - name: hello
-             image: busybox
-             command : ["echo", "Hello Kubernetes Job2"]
+           - name: whalesay
+             image: docker/whalesay
+             command : ["cowsay", "This is Kubernetes test job 2"]
            restartPolicy: OnFailure 
