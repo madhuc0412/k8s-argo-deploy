@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
    name: test-job2
 spec:
-   schedule: "*/5 * * * *" 
+   schedule: "*/2 * * * *" 
    concurrencyPolicy: Forbid
    successfulJobsHistoryLimit: 5
    failedJobsHistoryLimit: 5
